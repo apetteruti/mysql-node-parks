@@ -3,7 +3,7 @@ var inquirer = require("inquirer");
 var Table = require ("cli-table");
 
 var table = new Table({
-  head: ["Item Id", "Product Name", "Price"],
+  head: ["Park Name", "Location"],
       
       style: {
         head: ['white'],
@@ -29,16 +29,18 @@ var connection = mysql.createConnection({
 
 function readParks() {
 
-  console.log ("-----WELCOME TO BAMAZON!-----")
+  console.log ("-----WELCOME TO The National Parks Tracker-----")
   
-  connection.query("SELECT * FROM park", function (err, results) {
+  connection.query("SELECT parks_name,location FROM park", function (err, results) {
     if (err) throw err;
     for (var i = 0; i < results.length; i++) {
          table.push(
-        [results [i].id, results[i].parks_name, results[i].location]
+        [results[i].parks_name, results[i].location]
       );
     }
+    // console.log(results);
     console.log(table.toString());
+    optionsMenu();
   });
 }
 
@@ -48,3 +50,32 @@ connection.connect(function (err) {
   readParks();
 });
 
+function createPark(){
+connection.query("CREATE (parks_name, location) VALUES ??")
+
+}
+
+
+var optionsMenu = function () {
+
+  inquirer.prompt([{
+
+      name: "options",
+      type: "list",
+      choices: ["Create a new park", "Update a park", "Delete a Park"],
+      message: "What would you like to do?"
+
+  }]).then(function (answer) {
+      switch (answer.options) {
+          case "Create a new park":
+              createPark();
+              break;
+          case "Update a park":
+              updatePark();
+              break;
+          case "Delete a park":
+              deletePark();
+              break;
+      }
+  })
+}
